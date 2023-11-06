@@ -5,11 +5,13 @@ use termion::event::Key;
 use termion::input::TermRead;
 use termion::raw::{IntoRawMode, RawTerminal};
 
+/// struct to store the size of the terminal
 pub struct Size {
     pub width: u16,
     pub height: u16,
 }
 
+/// struct to store the terminal and its size
 pub struct Terminal {
     size: Size,
     _stdout: RawTerminal<io::Stdout>,
@@ -23,7 +25,7 @@ impl Terminal {
                 width: size.0,
                 height: size.1,
             },
-            _stdout: stdout().into_raw_mode()?,
+            _stdout: stdout().into_raw_mode()?, // initialize the terminal
         })
     }
     pub fn size(&self) -> &Size {
@@ -32,6 +34,8 @@ impl Terminal {
     pub fn clear_screen() {
         print!("{}", termion::clear::All);
     }
+
+    /// handle  the cursor position in the terminal
     #[allow(clippy::cast_possible_truncation)]
     pub fn cursor_position(position: &Position) {
         let Position { mut x, mut y } = position;
@@ -41,9 +45,12 @@ impl Terminal {
         let y = y as u16;
         print!("{}", termion::cursor::Goto(x, y));
     }
+    /// function to flush the stdout
     pub fn flush() -> Result<(), io::Error> {
         stdout().flush()
     }
+
+    /// function to read the key pressed by the user
     pub fn read_key() -> Result<Key, io::Error> {
         loop {
             if let Some(key) = io::stdin().lock().keys().next() {
@@ -51,6 +58,7 @@ impl Terminal {
             }
         }
     }
+
     pub fn cursor_hide() {
         print!("{}", termion::cursor::Hide);
     }
